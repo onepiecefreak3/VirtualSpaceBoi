@@ -9,7 +9,7 @@ namespace Contract
 {
     public abstract class SysModule
     {
-        public delegate void SysEventHandler(SysModule sender, params object[] args);
+        public delegate object[] SysEventHandler(SysModule sender, int svcId, params object[] args);
 
         public abstract event SysEventHandler SysCall;
 

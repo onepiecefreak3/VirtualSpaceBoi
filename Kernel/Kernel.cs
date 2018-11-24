@@ -19,8 +19,12 @@ namespace Kernel
         private RAM _ram;
         private SysModuleComposition _sysComp;
 
+        private List<(string uuid, int senderHash, string port)> _uuidRegister;
+
         public int Main(params object[] args)
         {
+            _uuidRegister = new List<(string, int, string)>();
+
             _sysComp = new SysModuleComposition("sysmodules");
             AddSysCallEvents();
 
@@ -32,9 +36,6 @@ namespace Kernel
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
-
-            //var ret = InitializeRAM(0x10000000);
-            //if (ret != 0) return ret;
 
             return 0;
         }
@@ -53,10 +54,53 @@ namespace Kernel
                 sys.Value.SysCall += OnSysCall;
         }
 
-        private void OnSysCall(SysModule sender, params object[] args)
+        private object[] OnSysCall(SysModule sender, int svcId, params object[] args)
         {
             Console.WriteLine($"Syscall executed by {sender.Name}");
             Console.WriteLine();
+
+            var pid = GetPID(sender);
+
+            switch (svcId)
+            {
+                //Get Handle
+                case 0:
+                    if (args.Length <= 0)
+                        throw new KernelPanicException("Insufficiant arguments");
+                    if (args[0].GetType() != typeof(string))
+                        throw new KernelPanicException("Unexpected argument type");
+
+                    var port = (string)args[0];
+
+                    for (var i = 0; i < _sysComp.SysModules.Count; i++)
+                    {
+                        if (_sysComp.SysModules[i].Metadata.Ports.Contains(port))
+                        {
+                            var uuid = Guid.NewGuid().ToString("N");
+                            _uuidRegister.Add((uuid, _sysComp.SysModules[i].Value.GetHashCode(), port));
+
+                            return new object[] { uuid };
+                        }
+                    }
+
+                    throw new KernelPanicException("Unknown port");
+                    //only executable if uuid handle exists
+                case 1:
+                    //TODO Implement example
+                    return null;
+                default:
+                    throw new KernelPanicException("Unknown svc");
+            }
+        }
+
+        private int GetPID(SysModule sender)
+        {
+            var hash = sender.GetHashCode();
+            for (int i = 0; i < _sysComp.SysModules.Count; i++)
+                if (hash == _sysComp.SysModules[i].Value.GetHashCode())
+                    return i + 1;
+
+            throw new KernelPanicException("No PID registered for module");
         }
 
         private int InitializeRAM(uint size)
