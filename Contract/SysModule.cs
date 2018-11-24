@@ -15,7 +15,7 @@ namespace Contract
 
         public abstract string Name { get; }
 
-        public abstract object[] SendSyncRequest(params object[] args);
+        public abstract object[] ServiceDispatch(params object[] args);
     }
 
     public interface ISysModuleMeta

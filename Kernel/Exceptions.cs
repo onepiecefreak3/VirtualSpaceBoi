@@ -8,9 +8,9 @@ namespace Kernel
 {
     public class KernelPanicException : Exception
     {
-        public KernelPanicException(string message) : base(message)
+        public KernelPanicException(string message) : base($"Kernel panic: {message}")
         {
-
+            Console.WriteLine($"Kernel panic: {message}");
         }
     }
 }

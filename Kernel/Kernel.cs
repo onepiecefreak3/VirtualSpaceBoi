@@ -19,18 +19,18 @@ namespace Kernel
         private RAM _ram;
         private SysModuleComposition _sysComp;
 
-        private List<(string uuid, int senderHash, string port)> _uuidRegister;
+        private Dictionary<string, SysModule> _uuidRegister;
 
         public int Main(params object[] args)
         {
-            _uuidRegister = new List<(string, int, string)>();
+            _uuidRegister = new Dictionary<string, SysModule>();
 
             _sysComp = new SysModuleComposition("sysmodules");
             AddSysCallEvents();
 
             ListLoadedSysModules();
 
-            var res = _sysComp.SysModules.FirstOrDefault()?.Value.SendSyncRequest();
+            var res = _sysComp.SysModules.FirstOrDefault()?.Value.ServiceDispatch();
             if (res != null) Console.WriteLine($"Kernel called {_sysComp.SysModules.First().Metadata.Name} and got an answer:{Environment.NewLine}" +
                 $"{res.Aggregate("", (a, b) => a + b.ToString() + Environment.NewLine)}");
 
@@ -51,10 +51,10 @@ namespace Kernel
         private void AddSysCallEvents()
         {
             foreach (var sys in _sysComp.SysModules)
-                sys.Value.SysCall += OnSysCall;
+                sys.Value.SysCall += ServiceDispatch;
         }
 
-        private object[] OnSysCall(SysModule sender, int svcId, params object[] args)
+        private object[] ServiceDispatch(SysModule sender, int svcId, params object[] args)
         {
             Console.WriteLine($"Syscall executed by {sender.Name}");
             Console.WriteLine();
@@ -77,17 +77,28 @@ namespace Kernel
                         if (_sysComp.SysModules[i].Metadata.Ports.Contains(port))
                         {
                             var uuid = Guid.NewGuid().ToString("N");
-                            _uuidRegister.Add((uuid, _sysComp.SysModules[i].Value.GetHashCode(), port));
+                            _uuidRegister.Add(uuid, _sysComp.SysModules[i].Value);
 
                             return new object[] { uuid };
                         }
                     }
 
                     throw new KernelPanicException("Unknown port");
-                    //only executable if uuid handle exists
+                //IPC
                 case 1:
-                    //TODO Implement example
-                    return null;
+                    if (args.Length <= 0)
+                        throw new KernelPanicException("Insufficiant arguments");
+                    if (args[0].GetType() != typeof(string))
+                        throw new KernelPanicException("Unexpected argument type");
+
+                    var handle = (string)args[0];
+                    if (!_uuidRegister.ContainsKey(handle))
+                        throw new KernelPanicException("Invalid handle");
+
+                    var args2 = new object[args.Length - 1];
+                    for (int i = 0; i < args2.Length; i++)
+                        args2[i] = args[i + 1];
+                    return _uuidRegister[handle].ServiceDispatch(args2);
                 default:
                     throw new KernelPanicException("Unknown svc");
             }
