@@ -16,13 +16,20 @@ namespace Kernel
     [KernelMeta(Name = "VirtualSpaceBoi - Kernel")]
     public class Kernel : IKernel
     {
-        private RAM _ram;
-        private SysModuleComposition _sysComp;
+        private class SysCallQueueMeta
+        {
+            public SysModule Sender { get; set; }
+            public int SvcId { get; set; }
+            public object[] Args { get; set; }
+        }
 
+        private SysModuleComposition _sysComp;
+        private Queue<SysCallQueueMeta> _sysCallQueue;
         private Dictionary<string, SysModule> _uuidRegister;
 
         public int Main(params object[] args)
         {
+            _sysCallQueue = new Queue<SysCallQueueMeta>();
             _uuidRegister = new Dictionary<string, SysModule>();
 
             _sysComp = new SysModuleComposition("sysmodules");
@@ -30,14 +37,26 @@ namespace Kernel
 
             ListLoadedSysModules();
 
+            Task.Factory.StartNew(() => TestCase());
+
+            while (true)
+            {
+                if (_sysCallQueue.Any())
+                {
+                    var sysCall = _sysCallQueue.Dequeue();
+                    Task.Factory.StartNew(() => ServiceDispatch(sysCall.Sender, sysCall.SvcId, sysCall.Args));
+                }
+            }
+        }
+
+        private void TestCase()
+        {
             var res = _sysComp.SysModules.FirstOrDefault()?.Value.ServiceDispatch();
             if (res != null) Console.WriteLine($"Kernel called {_sysComp.SysModules.First().Metadata.Name} and got an answer:{Environment.NewLine}" +
                 $"{res.Aggregate("", (a, b) => a + b.ToString() + Environment.NewLine)}");
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
-
-            return 0;
         }
 
         private void ListLoadedSysModules()
@@ -51,7 +70,14 @@ namespace Kernel
         private void AddSysCallEvents()
         {
             foreach (var sys in _sysComp.SysModules)
-                sys.Value.SysCall += ServiceDispatch;
+                sys.Value.SysCall += OnSysCall;
+        }
+
+        private object[] OnSysCall(SysModule sender, int svcId, params object[] args)
+        {
+            _sysCallQueue.Enqueue(new SysCallQueueMeta { Sender = sender, SvcId = svcId, Args = args });
+
+            return new object[0];
         }
 
         private object[] ServiceDispatch(SysModule sender, int svcId, params object[] args)
@@ -126,29 +152,6 @@ namespace Kernel
                     return i + 1;
 
             throw new KernelPanicException("No PID registered for module");
-        }
-
-        private int InitializeRAM(uint size)
-        {
-            _ram = new RAM(size);
-
-            return 0;
-        }
-
-        public int kernel_main(string[] args)
-        {
-            Console.WriteLine(args[0]);
-            return 0;
-        }
-
-        internal void test()
-        {
-            Console.WriteLine("NONONO");
-        }
-
-        private void test2()
-        {
-            Console.WriteLine("NONONO");
         }
 
         private class SysModuleComposition
