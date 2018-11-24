@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Contract;
+using System.IO;
 
 namespace VirtualSpaceBoi
 {
@@ -15,7 +16,7 @@ namespace VirtualSpaceBoi
     {
         public static void Main(string[] args)
         {
-            var comp = new KernelComposition(".");
+            var comp = new KernelCompositionByRam(".");
 
             bool accepted = false;
             var chosen = -1;
@@ -44,23 +45,48 @@ namespace VirtualSpaceBoi
             else Console.WriteLine("Kernel died.");
         }
 
-        private static void ListKernels(KernelComposition comp)
+        private static void ListKernels(KernelCompositionByRam comp)
         {
             Console.WriteLine("Available Kernels:");
             for (int i = 0; i < comp.Kernels.Count; i++)
                 Console.WriteLine($"{i}: {comp.Kernels[i].Metadata.Name}");
         }
 
-        private class KernelComposition
+//        private class KernelComposition
+//        {
+//#pragma warning disable 0649, 0169
+//            [ImportMany(typeof(IKernel))]
+//            public List<Lazy<IKernel, IKernelMeta>> Kernels;
+//#pragma warning restore 0649, 0169
+
+//            public KernelComposition(string path)
+//            {
+//                var catalog = new DirectoryCatalog(path);
+//                var container = new CompositionContainer(catalog);
+//                container.ComposeParts(this);
+//            }
+//        }
+
+        private class KernelCompositionByRam
         {
 #pragma warning disable 0649, 0169
             [ImportMany(typeof(IKernel))]
             public List<Lazy<IKernel, IKernelMeta>> Kernels;
 #pragma warning restore 0649, 0169
 
-            public KernelComposition(string path)
+            public KernelCompositionByRam(string path)
             {
-                var catalog = new DirectoryCatalog(path);
+                var catalog = new AggregateCatalog();
+
+                var files = Directory.GetFiles(path, "*.dll");
+                foreach (var file in files)
+                {
+                    //TODO: Verify RSA signature of container
+
+                    var assembly = Assembly.Load(File.ReadAllBytes(file));
+                    catalog.Catalogs.Add(new AssemblyCatalog(assembly));
+                }
+
                 var container = new CompositionContainer(catalog);
                 container.ComposeParts(this);
             }
