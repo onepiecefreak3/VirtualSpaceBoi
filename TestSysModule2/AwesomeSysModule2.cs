@@ -14,8 +14,6 @@ namespace TestSysModule2
     {
         public override string Name => nameof(AwesomeSysModule2);
 
-        public override event SysEventHandler SysCall;
-
         public override object[] ServiceDispatch(params object[] args)
         {
             Print("Called with a valid handle");
@@ -23,7 +21,5 @@ namespace TestSysModule2
 
             return new object[0];
         }
-
-        private void Print(string message) => Console.WriteLine($"{nameof(AwesomeSysModule2)}: {message}");
     }
 }

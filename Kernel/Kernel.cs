@@ -99,6 +99,20 @@ namespace Kernel
                     for (int i = 0; i < args2.Length; i++)
                         args2[i] = args[i + 1];
                     return _uuidRegister[handle].ServiceDispatch(args2);
+                //Free handle
+                case 2:
+                    if (args.Length <= 0)
+                        throw new KernelPanicException("Insufficiant arguments");
+                    if (args[0].GetType() != typeof(string))
+                        throw new KernelPanicException("Unexpected argument type");
+
+                    handle = (string)args[0];
+                    if (!_uuidRegister.ContainsKey(handle))
+                        throw new KernelPanicException("Invalid handle");
+
+                    _uuidRegister.Remove(handle);
+
+                    return new object[0];
                 default:
                     throw new KernelPanicException("Unknown svc");
             }
