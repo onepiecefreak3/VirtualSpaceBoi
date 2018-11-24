@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualSpaceBoi", "VirtualSpaceBoi\VirtualSpaceBoi.csproj", "{66643F22-8E04-463E-AD1A-6782A3E3FC5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bootloader", "VirtualSpaceBoi\Bootloader.csproj", "{66643F22-8E04-463E-AD1A-6782A3E3FC5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel", "Kernel\Kernel.csproj", "{FEE09D4E-2624-4452-A59A-5A2EA0B8A0C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{66643F22-8E04-463E-AD1A-6782A3E3FC5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66643F22-8E04-463E-AD1A-6782A3E3FC5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66643F22-8E04-463E-AD1A-6782A3E3FC5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEE09D4E-2624-4452-A59A-5A2EA0B8A0C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEE09D4E-2624-4452-A59A-5A2EA0B8A0C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEE09D4E-2624-4452-A59A-5A2EA0B8A0C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEE09D4E-2624-4452-A59A-5A2EA0B8A0C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
