@@ -18,6 +18,12 @@ namespace VirtualSpaceBoi
         {
             var comp = new KernelComposition(".");
 
+            if (comp.Kernels.Count <= 0)
+            {
+                Console.WriteLine("No kernels found. Shutting down...");
+                return;
+            }
+
             bool accepted = false;
             var chosen = -1;
             while (!accepted)
