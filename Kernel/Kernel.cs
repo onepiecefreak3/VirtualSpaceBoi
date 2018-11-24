@@ -22,6 +22,7 @@ namespace Kernel
         public int Main(params object[] args)
         {
             _sysComp = new SysModuleComposition("sysmodules");
+            AddSysCallEvents();
 
             ListLoadedSysModules();
 
@@ -43,6 +44,19 @@ namespace Kernel
             Console.WriteLine("Loaded sysmodules:");
             foreach (var sys in _sysComp.SysModules)
                 Console.WriteLine(sys.Metadata.Name);
+            Console.WriteLine();
+        }
+
+        private void AddSysCallEvents()
+        {
+            foreach (var sys in _sysComp.SysModules)
+                sys.Value.SysCall += OnSysCall;
+        }
+
+        private void OnSysCall(SysModule sender, params object[] args)
+        {
+            Console.WriteLine($"Syscall executed by {sender.Name}");
+            Console.WriteLine();
         }
 
         private int InitializeRAM(uint size)

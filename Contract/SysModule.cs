@@ -9,9 +9,11 @@ namespace Contract
 {
     public abstract class SysModule
     {
-        public delegate void SysEventHandler(object sender, params object[] args);
+        public delegate void SysEventHandler(SysModule sender, params object[] args);
 
         public abstract event SysEventHandler SysCall;
+
+        public abstract string Name { get; }
 
         public abstract object[] SendSyncRequest(params object[] args);
     }
