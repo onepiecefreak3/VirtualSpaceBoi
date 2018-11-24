@@ -16,7 +16,7 @@ namespace VirtualSpaceBoi
     {
         public static void Main(string[] args)
         {
-            var comp = new KernelCompositionByRam(".");
+            var comp = new KernelComposition(".");
 
             bool accepted = false;
             var chosen = -1;
@@ -45,36 +45,21 @@ namespace VirtualSpaceBoi
             else Console.WriteLine("Kernel died.");
         }
 
-        private static void ListKernels(KernelCompositionByRam comp)
+        private static void ListKernels(KernelComposition comp)
         {
             Console.WriteLine("Available Kernels:");
             for (int i = 0; i < comp.Kernels.Count; i++)
                 Console.WriteLine($"{i}: {comp.Kernels[i].Metadata.Name}");
         }
 
-//        private class KernelComposition
-//        {
-//#pragma warning disable 0649, 0169
-//            [ImportMany(typeof(IKernel))]
-//            public List<Lazy<IKernel, IKernelMeta>> Kernels;
-//#pragma warning restore 0649, 0169
-
-//            public KernelComposition(string path)
-//            {
-//                var catalog = new DirectoryCatalog(path);
-//                var container = new CompositionContainer(catalog);
-//                container.ComposeParts(this);
-//            }
-//        }
-
-        private class KernelCompositionByRam
+        private class KernelComposition
         {
 #pragma warning disable 0649, 0169
             [ImportMany(typeof(IKernel))]
             public List<Lazy<IKernel, IKernelMeta>> Kernels;
 #pragma warning restore 0649, 0169
 
-            public KernelCompositionByRam(string path)
+            public KernelComposition(string path)
             {
                 var catalog = new AggregateCatalog();
 
