@@ -26,8 +26,18 @@ namespace Contract
             var args2 = new List<object>();
             args2.Add(handle);
             args2.AddRange(args);
-            return SysCall(this, 1, args2.ToArray());
+
+            Ipc(args2.ToArray());
+
+            while (!IpcCheckForCompletion())
+                ;
+
+            return GetIpcResults();
         }
+
+        private void Ipc(params object[] args) => SysCall(this, 1, args);
+        private bool IpcCheckForCompletion() => (bool)SysCall(this, 3).First();
+        private object[] GetIpcResults() => SysCall(this, 4);
     }
 
     public interface ISysModuleMeta

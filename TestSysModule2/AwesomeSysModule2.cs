@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using Contract;
 
 namespace TestSysModule2
@@ -19,7 +20,9 @@ namespace TestSysModule2
             Print("Called with a valid handle");
             Print((string)args[0]);
 
-            return new object[0];
+            Thread.Sleep((int)args[1]);
+
+            return new object[1] { $"Hi there from {nameof(AwesomeSysModule2)}" };
         }
     }
 }
