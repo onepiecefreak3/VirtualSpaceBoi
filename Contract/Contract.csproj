@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDisplay.cs" />
+    <Compile Include="IHardware.cs" />
     <Compile Include="IKernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SysModule.cs" />

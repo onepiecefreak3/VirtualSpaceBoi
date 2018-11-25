@@ -13,7 +13,7 @@ using Contract;
 namespace Kernel
 {
     [Export(typeof(IKernel))]
-    [KernelMeta(Name = "VirtualSpaceBoi - Kernel")]
+    [KernelMeta(Name = "VirtualSpaceBoi: Kernel")]
     public class Kernel : IKernel
     {
         private Object _queueLock = new Object();
@@ -22,6 +22,8 @@ namespace Kernel
         private Queue<SysCallQueueMeta> _sysCallQueue;
         private Dictionary<int, SysCallExecution> _runningSysCalls;
         private Dictionary<string, SysModule> _uuidRegister;
+
+        private IDisplay _display;
 
         public int Main(params object[] args)
         {
@@ -38,14 +40,35 @@ namespace Kernel
         #region Private methods
         private void Initialize()
         {
+            //Initialize hardware
+            InitHardware();
+
+            //Preparing syscall stuff
             _sysCallQueue = new Queue<SysCallQueueMeta>();
             _runningSysCalls = new Dictionary<int, SysCallExecution>();
             _uuidRegister = new Dictionary<string, SysModule>();
 
+            //initializing sysmodules
             _sysComp = new SysModuleComposition("sysmodules");
             AddSysCallEvents();
 
             ListLoadedSysModules();
+        }
+
+        private void InitHardware()
+        {
+            var comp = new HardwareComposition("hardware");
+            if (comp.Hardware.Count <= 0)
+                throw new KernelPanicException("Hardware is missing");
+
+            foreach (var hw in comp.Hardware)
+            {
+                if (hw.Value is IDisplay disp)
+                {
+                    _display = disp;
+                    _display.SetFrameBuffer(new byte[776 * 426 * 4]);
+                }
+            }
         }
 
         private void StartMainLoop()
@@ -259,6 +282,31 @@ namespace Kernel
                 foreach (var file in files)
                 {
                     //TODO: Verify RSA signature of container
+
+                    var assembly = Assembly.Load(File.ReadAllBytes(file));
+                    catalog.Catalogs.Add(new AssemblyCatalog(assembly));
+                }
+
+                var container = new CompositionContainer(catalog);
+                container.ComposeParts(this);
+            }
+        }
+
+        private class HardwareComposition
+        {
+#pragma warning disable 0649, 0169
+            [ImportMany(typeof(IHardware))]
+            public List<Lazy<IHardware, IHardwareMeta>> Hardware;
+#pragma warning restore 0649, 0169
+
+            public HardwareComposition(string path)
+            {
+                var catalog = new AggregateCatalog();
+
+                var files = Directory.GetFiles(path, "*.dll");
+                foreach (var file in files)
+                {
+                    //TODO: Verify public key with MEF
 
                     var assembly = Assembly.Load(File.ReadAllBytes(file));
                     catalog.Catalogs.Add(new AssemblyCatalog(assembly));

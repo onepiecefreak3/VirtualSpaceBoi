@@ -12,6 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel", "Kernel\Kernel.csp
 	ProjectSection(ProjectDependencies) = postProject
 		{B81D8050-692C-4C98-B9A9-CAE77BDDC7F8} = {B81D8050-692C-4C98-B9A9-CAE77BDDC7F8}
 		{BA5348DB-0168-49C4-9C4C-A521BE40FD86} = {BA5348DB-0168-49C4-9C4C-A521BE40FD86}
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E} = {21C086FA-A5B5-4E71-9E85-70975FDE4A7E}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contract", "Contract\Contract.csproj", "{036C12AF-8FA1-4068-BD75-6EAA14A560F8}"
@@ -19,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule", "TestSysModule\TestSysModule.csproj", "{B81D8050-692C-4C98-B9A9-CAE77BDDC7F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule2", "TestSysModule2\TestSysModule2.csproj", "{BA5348DB-0168-49C4-9C4C-A521BE40FD86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Display", "Display\Display.csproj", "{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +49,10 @@ Global
 		{BA5348DB-0168-49C4-9C4C-A521BE40FD86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA5348DB-0168-49C4-9C4C-A521BE40FD86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA5348DB-0168-49C4-9C4C-A521BE40FD86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
