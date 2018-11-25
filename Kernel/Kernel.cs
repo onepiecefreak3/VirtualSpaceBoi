@@ -8,7 +8,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using Contract;
+using System.Collections.Concurrent;
+using System.Windows.Forms;
 
 namespace Kernel
 {
@@ -16,13 +19,12 @@ namespace Kernel
     [KernelMeta(Name = "VirtualSpaceBoi: Kernel")]
     public class Kernel : IKernel
     {
-        private Object _queueLock = new Object();
-
         private SysModuleComposition _sysComp;
-        private Queue<SysCallQueueMeta> _sysCallQueue;
+        private BlockingCollection<SysCallQueueMeta> _sysCallQueue;
         private Dictionary<int, SysCallExecution> _runningSysCalls;
         private Dictionary<string, SysModule> _uuidRegister;
 
+        private Thread _displayThread;
         private IDisplay _display;
 
         public int Main(params object[] args)
@@ -44,7 +46,7 @@ namespace Kernel
             InitHardware();
 
             //Preparing syscall stuff
-            _sysCallQueue = new Queue<SysCallQueueMeta>();
+            _sysCallQueue = new BlockingCollection<SysCallQueueMeta>();
             _runningSysCalls = new Dictionary<int, SysCallExecution>();
             _uuidRegister = new Dictionary<string, SysModule>();
 
@@ -63,11 +65,18 @@ namespace Kernel
 
             foreach (var hw in comp.Hardware)
             {
-                if (hw.Value is IDisplay disp)
-                {
-                    _display = disp;
-                    _display.SetFrameBuffer(new byte[776 * 426 * 4]);
-                }
+                _displayThread = new Thread(() =>
+                  {
+                      if (hw.Value is IDisplay disp)
+                      {
+                          _display = disp;
+                          Application.Run((Form)_display);
+                      }
+                  });
+                _displayThread.Start();
+
+                while (_display == null)
+                    ;
             }
         }
 
@@ -75,17 +84,9 @@ namespace Kernel
         {
             while (true)
             {
-                SysCallQueueMeta sysCall = null;
-
-                lock (_queueLock)
+                if (_sysCallQueue.Any())
                 {
-                    var queueAny = _sysCallQueue.Any();
-                    if (queueAny)
-                        sysCall = _sysCallQueue.Dequeue();
-                }
-
-                if (sysCall != null)
-                {
+                    var sysCall = _sysCallQueue.Take();
                     Task.Factory.StartNew(() =>
                     {
                         var ident = sysCall.Sender.GetHashCode();
@@ -219,10 +220,7 @@ namespace Kernel
             var sysCallExec = new SysCallExecution { Handle = handle, IsFinished = false, Result = new object[0] };
             _runningSysCalls.Add(sender.GetHashCode(), sysCallExec);
 
-            lock (_queueLock)
-            {
-                _sysCallQueue.Enqueue(new SysCallQueueMeta { Sender = sender, Args = args2 });
-            }
+            _sysCallQueue.Add(new SysCallQueueMeta { Sender = sender, Args = args2 });
 
             return new object[0];
         }

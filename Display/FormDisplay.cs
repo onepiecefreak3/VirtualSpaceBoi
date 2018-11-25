@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using Contract;
 
@@ -24,17 +25,19 @@ namespace Display
             InitializeComponent();
 
             _frameBuffer = new byte[776 * 426 * 4];
+            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
             Show();
         }
 
-        public void SetFrameBuffer(byte[] frame)
+        public unsafe void SetFrameBuffer(byte[] frame)
         {
-            var test = new byte[0x100];
-            for (int i = 0; i < 0x100; i++)
-                test[i] = 0xFF;
-            Array.Copy(frame, 0, _frameBuffer, 0, _frameBuffer.Length);
-            Array.Copy(test, 0, _frameBuffer, 0, test.Length);
-            picDisplay.Image = Bitmap.FromStream(new MemoryStream(_frameBuffer));
+            var data = (picDisplay.Image as Bitmap).LockBits(new Rectangle(0, 0, picDisplay.Image.Width, picDisplay.Image.Height), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var point = (byte*)data.Scan0;
+
+            for (int i = 0; i < _frameBuffer.Length; i++)
+                point[i] = frame[i];
+
+            (picDisplay.Image as Bitmap).UnlockBits(data);
         }
     }
 }
