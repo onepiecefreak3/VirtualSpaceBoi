@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\VirtualSpaceBoi\bin\Debug\hardware\</OutputPath>
+    <OutputPath>..\..\VirtualSpaceBoi\bin\Debug\hardware\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\VirtualSpaceBoi\bin\Release\hardware\</OutputPath>
+    <OutputPath>..\..\VirtualSpaceBoi\bin\Release\hardware\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -84,7 +84,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Contract\Contract.csproj">
+    <ProjectReference Include="..\..\Contract\Contract.csproj">
       <Project>{036c12af-8fa1-4068-bd75-6eaa14a560f8}</Project>
       <Name>Contract</Name>
     </ProjectReference>

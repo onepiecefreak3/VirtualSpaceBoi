@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\VirtualSpaceBoi\bin\Debug\sysmodules\</OutputPath>
+    <OutputPath>..\..\VirtualSpaceBoi\bin\Debug\sysmodules\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\VirtualSpaceBoi\bin\Release\sysmodules\</OutputPath>
+    <OutputPath>..\..\VirtualSpaceBoi\bin\Release\sysmodules\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Contract\Contract.csproj">
+    <ProjectReference Include="..\..\Contract\Contract.csproj">
       <Project>{036c12af-8fa1-4068-bd75-6eaa14a560f8}</Project>
       <Name>Contract</Name>
     </ProjectReference>

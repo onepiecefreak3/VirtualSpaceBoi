@@ -17,11 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel", "Kernel\Kernel.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contract", "Contract\Contract.csproj", "{036C12AF-8FA1-4068-BD75-6EAA14A560F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule", "TestSysModule\TestSysModule.csproj", "{B81D8050-692C-4C98-B9A9-CAE77BDDC7F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule", "sysmodules\TestSysModule\TestSysModule.csproj", "{B81D8050-692C-4C98-B9A9-CAE77BDDC7F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule2", "TestSysModule2\TestSysModule2.csproj", "{BA5348DB-0168-49C4-9C4C-A521BE40FD86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule2", "sysmodules\TestSysModule2\TestSysModule2.csproj", "{BA5348DB-0168-49C4-9C4C-A521BE40FD86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Display", "Display\Display.csproj", "{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Display", "hardware\Display\Display.csproj", "{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sysmodules", "sysmodules", "{4B5C792D-F130-4014-89A2-C174D90F89D9}"
 EndProject
