@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSysModule2", "TestSysMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Display", "Display\Display.csproj", "{21C086FA-A5B5-4E71-9E85-70975FDE4A7E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sysmodules", "sysmodules", "{4B5C792D-F130-4014-89A2-C174D90F89D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hardware", "hardware", "{3D5274C4-EA99-41E2-81C0-8859CCFFA77E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B81D8050-692C-4C98-B9A9-CAE77BDDC7F8} = {4B5C792D-F130-4014-89A2-C174D90F89D9}
+		{BA5348DB-0168-49C4-9C4C-A521BE40FD86} = {4B5C792D-F130-4014-89A2-C174D90F89D9}
+		{21C086FA-A5B5-4E71-9E85-70975FDE4A7E} = {3D5274C4-EA99-41E2-81C0-8859CCFFA77E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F286260-01AB-4F05-BF4E-3B3F41338CB8}
