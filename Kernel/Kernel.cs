@@ -84,19 +84,16 @@ namespace Kernel
         {
             while (true)
             {
-                if (_sysCallQueue.Any())
+                var sysCall = _sysCallQueue.Take();
+                Task.Factory.StartNew(() =>
                 {
-                    var sysCall = _sysCallQueue.Take();
-                    Task.Factory.StartNew(() =>
-                    {
-                        var ident = sysCall.Sender.GetHashCode();
+                    var ident = sysCall.Sender.GetHashCode();
 
-                        var res = _uuidRegister[_runningSysCalls[ident].Handle].ServiceDispatch(sysCall.Args);
+                    var res = _uuidRegister[_runningSysCalls[ident].Handle].ServiceDispatch(sysCall.Args);
 
-                        _runningSysCalls[ident].Result = res;
-                        _runningSysCalls[ident].IsFinished = true;
-                    });
-                }
+                    _runningSysCalls[ident].Result = res;
+                    _runningSysCalls[ident].IsFinished = true;
+                });
             }
         }
 
