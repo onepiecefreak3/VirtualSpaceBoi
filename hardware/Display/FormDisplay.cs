@@ -10,24 +10,34 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
-using Contract;
+using Contract.Hardware;
 
 namespace Display
 {
-    [Export(typeof(IHardware))]
-    [HardwareMeta(Name = "Display", MAC = "1A2B3C4D5E6F")]
     public partial class FormDisplay : Form, IDisplay
     {
         private byte[] _frameBuffer;
+
+        public string MAC => "1A2B3C4D5E6F";
 
         public FormDisplay()
         {
             InitializeComponent();
 
+            Name = "Display";
+            FormClosed += FormDisplay_FormClosed;
+
             _frameBuffer = new byte[776 * 426 * 4];
             picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
             Show();
         }
+
+        private void FormDisplay_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Kill(this);
+        }
+
+        public event KillEventHandler Kill;
 
         public unsafe void SetFrameBuffer(byte[] frame)
         {

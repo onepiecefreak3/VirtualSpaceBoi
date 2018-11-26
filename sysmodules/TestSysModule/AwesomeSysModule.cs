@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contract;
+using Contract.Software;
 
 namespace TestSysModule
 {

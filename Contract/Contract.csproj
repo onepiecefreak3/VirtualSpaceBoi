@@ -42,11 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDisplay.cs" />
-    <Compile Include="IHardware.cs" />
-    <Compile Include="IKernel.cs" />
+    <Compile Include="Hardware\IDisplay.cs" />
+    <Compile Include="Hardware\IHardware.cs" />
+    <Compile Include="Hardware\IMemory.cs" />
+    <Compile Include="Hardware\ISecurity.cs" />
+    <Compile Include="Software\IKernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SysModule.cs" />
+    <Compile Include="Software\SysModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

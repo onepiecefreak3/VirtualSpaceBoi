@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using Contract;
+using Contract.Software;
 
 namespace TestSysModule2
 {

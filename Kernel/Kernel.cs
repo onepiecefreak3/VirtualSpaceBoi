@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using Contract;
+using Contract.Software;
 using System.Collections.Concurrent;
 using System.Windows.Forms;
 
@@ -24,8 +24,8 @@ namespace Kernel
         private Dictionary<SysModule, SysCallExecution> _runningSysCalls;
         private Dictionary<string, SysModule> _uuidRegister;
 
+        private Hardware _hardware;
         private Thread _displayThread;
-        private IDisplay _display;
 
         public int Main(params object[] args)
         {
@@ -43,7 +43,7 @@ namespace Kernel
         private void Initialize()
         {
             //Initialize hardware
-            InitHardware();
+            _hardware = new Hardware("hardware");
 
             //Preparing syscall stuff
             _sysCallQueue = new BlockingCollection<SysCallQueueMeta>();
@@ -55,29 +55,6 @@ namespace Kernel
             AddSysCallEvents();
 
             ListLoadedSysModules();
-        }
-
-        private void InitHardware()
-        {
-            var comp = new HardwareComposition("hardware");
-            if (comp.Hardware.Count <= 0)
-                throw new KernelPanicException("Hardware is missing");
-
-            foreach (var hw in comp.Hardware)
-            {
-                _displayThread = new Thread(() =>
-                  {
-                      if (hw.Value is IDisplay disp)
-                      {
-                          _display = disp;
-                          Application.Run((Form)_display);
-                      }
-                  });
-                _displayThread.Start();
-
-                while (_display == null)
-                    ;
-            }
         }
 
         private void MainLoop()
@@ -274,31 +251,6 @@ namespace Kernel
                 foreach (var file in files)
                 {
                     //TODO: Verify RSA signature of container
-
-                    var assembly = Assembly.Load(File.ReadAllBytes(file));
-                    catalog.Catalogs.Add(new AssemblyCatalog(assembly));
-                }
-
-                var container = new CompositionContainer(catalog);
-                container.ComposeParts(this);
-            }
-        }
-
-        private class HardwareComposition
-        {
-#pragma warning disable 0649, 0169
-            [ImportMany(typeof(IHardware))]
-            public List<Lazy<IHardware, IHardwareMeta>> Hardware;
-#pragma warning restore 0649, 0169
-
-            public HardwareComposition(string path)
-            {
-                var catalog = new AggregateCatalog();
-
-                var files = Directory.GetFiles(path, "*.dll");
-                foreach (var file in files)
-                {
-                    //TODO: Verify public key with MEF
 
                     var assembly = Assembly.Load(File.ReadAllBytes(file));
                     catalog.Catalogs.Add(new AssemblyCatalog(assembly));

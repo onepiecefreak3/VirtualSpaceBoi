@@ -5,12 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contract
+namespace Contract.Software
 {
     public abstract class SysModule
     {
-        public delegate object[] SysEventHandler(SysModule sender, int svcId, params object[] args);
-
         public event SysEventHandler SysCall;
 
         public abstract string Name { get; }
@@ -39,6 +37,8 @@ namespace Contract
         private bool IpcCheckForCompletion() => (bool)SysCall(this, 3).First();
         private object[] GetIpcResults() => SysCall(this, 4);
     }
+
+    public delegate object[] SysEventHandler(SysModule sender, int svcId, params object[] args);
 
     public interface ISysModuleMeta
     {
