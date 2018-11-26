@@ -21,7 +21,7 @@ namespace Kernel
     {
         private SysModuleComposition _sysComp;
         private BlockingCollection<SysCallQueueMeta> _sysCallQueue;
-        private Dictionary<int, SysCallExecution> _runningSysCalls;
+        private Dictionary<SysModule, SysCallExecution> _runningSysCalls;
         private Dictionary<string, SysModule> _uuidRegister;
 
         private Thread _displayThread;
@@ -34,7 +34,7 @@ namespace Kernel
             //TODO: TEMP TestCases - REMOVE
             StartTests();
 
-            StartMainLoop();
+            MainLoop();
 
             return 0;
         }
@@ -47,7 +47,7 @@ namespace Kernel
 
             //Preparing syscall stuff
             _sysCallQueue = new BlockingCollection<SysCallQueueMeta>();
-            _runningSysCalls = new Dictionary<int, SysCallExecution>();
+            _runningSysCalls = new Dictionary<SysModule, SysCallExecution>();
             _uuidRegister = new Dictionary<string, SysModule>();
 
             //initializing sysmodules
@@ -80,19 +80,19 @@ namespace Kernel
             }
         }
 
-        private void StartMainLoop()
+        private void MainLoop()
         {
             while (true)
             {
                 var sysCall = _sysCallQueue.Take();
                 Task.Factory.StartNew(() =>
                 {
-                    var ident = sysCall.Sender.GetHashCode();
+                    var runningSysCall = _runningSysCalls[sysCall.Sender];
 
-                    var res = _uuidRegister[_runningSysCalls[ident].Handle].ServiceDispatch(sysCall.Args);
+                    var res = _uuidRegister[runningSysCall.Handle].ServiceDispatch(sysCall.Args);
 
-                    _runningSysCalls[ident].Result = res;
-                    _runningSysCalls[ident].IsFinished = true;
+                    runningSysCall.Result = res;
+                    runningSysCall.IsFinished = true;
                 });
             }
         }
@@ -113,9 +113,8 @@ namespace Kernel
 
         private int GetPID(SysModule sender)
         {
-            var hash = sender.GetHashCode();
             for (int i = 0; i < _sysComp.SysModules.Count; i++)
-                if (hash == _sysComp.SysModules[i].Value.GetHashCode())
+                if (sender.Equals(_sysComp.SysModules[i].Value))
                     return i + 1;
 
             throw new KernelPanicException("No PID registered for module");
@@ -215,7 +214,7 @@ namespace Kernel
                 args2[i] = args[i + 1];
 
             var sysCallExec = new SysCallExecution { Handle = handle, IsFinished = false, Result = new object[0] };
-            _runningSysCalls.Add(sender.GetHashCode(), sysCallExec);
+            _runningSysCalls.Add(sender, sysCallExec);
 
             _sysCallQueue.Add(new SysCallQueueMeta { Sender = sender, Args = args2 });
 
@@ -240,23 +239,21 @@ namespace Kernel
 
         private object[] CheckForIpcCompletion(SysModule sender, object[] args)
         {
-            var ident = sender.GetHashCode();
-            if (!_runningSysCalls.ContainsKey(ident))
+            if (!_runningSysCalls.ContainsKey(sender))
                 throw new KernelPanicException("No running IPCs for this module");
 
-            return new object[] { _runningSysCalls[ident].IsFinished };
+            return new object[] { _runningSysCalls[sender].IsFinished };
         }
 
         private object[] GetIpcResult(SysModule sender, object[] args)
         {
-            var ident = sender.GetHashCode();
-            if (!_runningSysCalls.ContainsKey(ident))
+            if (!_runningSysCalls.ContainsKey(sender))
                 throw new KernelPanicException("No running IPCs for this module");
-            if (!_runningSysCalls[ident].IsFinished)
+            if (!_runningSysCalls[sender].IsFinished)
                 throw new KernelPanicException("IPC not ready yet");
 
-            var res = _runningSysCalls[ident].Result;
-            _runningSysCalls.Remove(ident);
+            var res = _runningSysCalls[sender].Result;
+            _runningSysCalls.Remove(sender);
 
             return res;
         }
